@@ -1,5 +1,9 @@
 ### Monotone Changelog
 
+## 1.1.0 (2025-02-13)
+
+Changing the project license to MIT
+
 ## 1.0.0 (2024-04-16)
 
 **The first public Monotone GA release.**

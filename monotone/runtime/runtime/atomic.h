@@ -6,11 +6,9 @@
 // embeddable cloud-native storage for events
 // and time-series data.
 //
-// Copyright (c) 2023-2024 Dmitry Simonenko
-// Copyright (c) 2023-2024 Monotone
+// Copyright (c) 2023-2025 Dmitry Simonenko
 //
-// Distributed under the terms of GNU LGPL v3 or
-// Monotone Commercial License.
+// MIT Licensed.
 //
 
 typedef volatile uint32_t atomic_u32;
