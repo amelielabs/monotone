@@ -19,6 +19,7 @@ struct Global
 	Control*        control;
 	CompressionMgr* compression_mgr;
 	EncryptionMgr*  encryption_mgr;
+	CrcFunction     crc;
 	Random*         random;
 	MemoryMgr*      memory_mgr;
 };

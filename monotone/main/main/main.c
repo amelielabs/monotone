@@ -62,6 +62,10 @@ main_init(Main* self)
 	self->global.encryption_mgr  = &self->encryption_mgr;
 	self->global.random          = &self->random;
 	self->global.memory_mgr      = &self->memory_mgr;
+	if (crc32_sse_supported())
+		self->global.crc = crc32_sse;
+	else
+		self->global.crc = crc32;
 
 	// runtime
 	self->context.log     = (LogFunction)logger_write;

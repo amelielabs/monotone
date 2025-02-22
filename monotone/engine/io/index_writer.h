@@ -155,16 +155,16 @@ index_writer_stop(IndexWriter* self,
 	// calculate index data crc
 	uint32_t crc = 0;
 	if (self->encryption)
-		crc = crc32(crc, self->encrypted.start, buf_size(&self->encrypted));
+		crc = global()->crc(crc, self->encrypted.start, buf_size(&self->encrypted));
 	else
 	if (self->compression)
-		crc = crc32(crc, self->compressed.start, buf_size(&self->compressed));
+		crc = global()->crc(crc, self->compressed.start, buf_size(&self->compressed));
 	else
-		crc = crc32(crc, self->data.start, buf_size(&self->data));
+		crc = global()->crc(crc, self->data.start, buf_size(&self->data));
 	index->crc_data = crc;
 
 	// calculate index crc
-	index->crc = crc32(0, index, sizeof(Index));
+	index->crc = global()->crc(0, index, sizeof(Index));
 }
 
 static inline void

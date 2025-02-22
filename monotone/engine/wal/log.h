@@ -116,7 +116,7 @@ log_add_event(Log* self, LogOp* op, Event* event)
 
 	// calculate crc
 	if (var_int_of(&config()->wal_crc))
-		self->write.crc = crc32(self->write.crc, event, event_size(event));
+		self->write.crc = global()->crc(self->write.crc, event, event_size(event));
 }
 
 hot static inline void

@@ -68,6 +68,6 @@ static inline void
 log_write_seal(LogWrite* self)
 {
 	if (var_int_of(&config()->wal_crc))
-		self->crc = crc32(self->crc, (char*)self + sizeof(uint32_t),
-		                  sizeof(LogWrite) - sizeof(uint32_t));
+		self->crc = global()->crc(self->crc, (char*)self + sizeof(uint32_t),
+		                          sizeof(LogWrite) - sizeof(uint32_t));
 }

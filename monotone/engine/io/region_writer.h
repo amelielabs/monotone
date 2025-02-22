@@ -200,15 +200,15 @@ region_writer_crc(RegionWriter* self)
 	uint32_t crc = 0;
 	if (self->encryption)
 	{
-		crc = crc32(crc, self->encrypted.start, buf_size(&self->encrypted));
+		crc = global()->crc(crc, self->encrypted.start, buf_size(&self->encrypted));
 	} else
 	if (self->compression)
 	{
-		crc = crc32(crc, self->compressed.start, buf_size(&self->compressed));
+		crc = global()->crc(crc, self->compressed.start, buf_size(&self->compressed));
 	} else
 	{
-		crc = crc32(crc, self->meta.start, buf_size(&self->meta));
-		crc = crc32(crc, self->data.start, buf_size(&self->data));
+		crc = global()->crc(crc, self->meta.start, buf_size(&self->meta));
+		crc = global()->crc(crc, self->data.start, buf_size(&self->data));
 	}
 	return crc;
 }

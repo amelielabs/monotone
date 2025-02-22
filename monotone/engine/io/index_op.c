@@ -47,7 +47,7 @@ index_open(File*   self,
 
 	// check index crc
 	uint32_t crc;
-	crc = crc32(0, (char*)index + sizeof(uint32_t), sizeof(Index) - sizeof(uint32_t));
+	crc = global()->crc(0, (char*)index + sizeof(uint32_t), sizeof(Index) - sizeof(uint32_t));
 	if (crc != index->crc)
 		error("partition: file index '%s' crc mismatch",
 		      str_of(&self->path));
@@ -151,7 +151,7 @@ index_read(File*   self,
 	file_pread_buf(self, index_data, index->size, offset);
 
 	// check index data crc
-	uint32_t crc = crc32(0, index_data->start, buf_size(index_data));
+	uint32_t crc = global()->crc(0, index_data->start, buf_size(index_data));
 	if (crc != index->crc_data)
 		error("partition: file index data '%s' crc mismatch",
 		      str_of(&self->path));
