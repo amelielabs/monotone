@@ -178,4 +178,11 @@ add_executable(example_write_and_read EXCLUDE_FROM_ALL
 target_link_libraries(example_write_and_read ${MONOTONE_STATIC_LINK})
 target_link_libraries(example_write_and_read ${MONOTONE_LIBRARIES})
 set_target_properties(example_write_and_read PROPERTIES OUTPUT_NAME example_write_and_read)
-add_custom_target(examples DEPENDS example_write_and_read)
+
+add_executable(example_write_and_delete EXCLUDE_FROM_ALL
+               ${CMAKE_SOURCE_DIR}/examples/write_and_delete.c)
+target_link_libraries(example_write_and_delete ${MONOTONE_STATIC_LINK})
+target_link_libraries(example_write_and_delete ${MONOTONE_LIBRARIES})
+set_target_properties(example_write_and_delete PROPERTIES OUTPUT_NAME example_write_and_delete)
+
+add_custom_target(examples DEPENDS example_write_and_read example_write_and_delete)

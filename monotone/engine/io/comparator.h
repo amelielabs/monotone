@@ -24,12 +24,18 @@ comparator_init(Comparator* self)
 	self->unused = 0;
 }
 
+always_inline static inline int
+compare_int64(int64_t a, int64_t b)
+{
+    return (a > b) - (a < b);
+}
+
 hot static inline int64_t
 compare(Comparator* self, Event* a, Event* b)
 {
 	unused(self);
 	// compare by [id, key]
-	int64_t diff = a->id - b->id;
+	int64_t diff = compare_int64(a->id, b->id);
 	if (likely(diff != 0))
 		return diff;
 	if (a->key_size == 0 && b->key_size == 0)
@@ -41,6 +47,6 @@ compare(Comparator* self, Event* a, Event* b)
 		size = b->key_size;
 	int rc = memcmp(a->data, b->data, size);
 	if (rc == 0)
-		return (int64_t)a->key_size - (int64_t)b->key_size;
+		return compare_int64(a->key_size, b->key_size);
 	return rc;
 }

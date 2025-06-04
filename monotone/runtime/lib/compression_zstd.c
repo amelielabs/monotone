@@ -85,7 +85,6 @@ compression_zstd_compress(Compression* ptr, Buf* buf, int level,
 	in.pos   = 0;
 	ssize_t rc;
 	rc = ZSTD_compressStream2(self->ctx, &out, &in, ZSTD_e_end);
-	assert(rc == 0);
 	unused(rc);
 
 	buf_advance(buf, out.pos);

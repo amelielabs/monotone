@@ -10,10 +10,28 @@
 // This file is a Public Domain.
 //
 
+#include <inttypes.h>
 #include <monotone.h>
 
-int
-main(int argc, char* argv[])
+static void
+execute(monotone_t* env, const char* cmd)
+{
+	printf("> %s\n", cmd);
+
+	// show statistics
+	char* result = NULL;
+	int rc = monotone_execute(env, cmd, &result);
+	if (rc == -1)
+		fprintf(stderr, "monotone_execute() failed: %s\n", monotone_error(env));
+	if (result)
+	{
+		printf("%s\n", result);
+		free(result);
+	}
+}
+
+static int
+prepare(void)
 {
 	// create environment
 	monotone_t* env = monotone_init();
@@ -24,10 +42,10 @@ main(int argc, char* argv[])
 	}
 
 	// repeat log messages to the console
-	monotone_execute(env, "set log_to_stdout to true", NULL);
+	execute(env, "set log_to_stdout to true");
 
 	// create or open repository
-	int rc = monotone_open(env, "./example_repo");
+	int rc = monotone_open(env, "./example_repo_2");
 	if (rc == -1)
 	{
 		monotone_free(env);
@@ -35,11 +53,12 @@ main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	// write one million events using batches
-	const int batch_size = 200;
+	// write 10000 events
+	const int batch_size = 100;
 	monotone_event_t batch[batch_size];
 
-	for (int i = 0; i < 5000; i++)
+	int id = 0;
+	for (int i = 0; i < 100; i++)
 	{
 		for (int j = 0; j < batch_size; j++)
 		{
@@ -47,7 +66,7 @@ main(int argc, char* argv[])
 			// automatically
 			monotone_event_t* event = &batch[j];
 			event->flags      = 0;
-			event->id         = UINT64_MAX;
+			event->id         = id++;
 			event->key        = NULL;
 			event->key_size   = 0;
 			event->value      = NULL;
@@ -61,6 +80,39 @@ main(int argc, char* argv[])
 			return EXIT_FAILURE;
 		}
 	}
+
+	// show statistics
+	execute(env, "show partitions");
+
+	monotone_free(env);
+	return 0;
+}
+
+static int
+process_1_by_1(void)
+{
+	// create environment
+	monotone_t* env = monotone_init();
+	if (env == NULL)
+	{
+		fprintf(stderr, "monotone_init() failed\n");
+		return EXIT_FAILURE;
+	}
+
+	// repeat log messages to the console
+	execute(env, "set log_to_stdout to true");
+
+	// create or open repository
+	int rc = monotone_open(env, "./example_repo_2");
+	if (rc == -1)
+	{
+		monotone_free(env);
+		fprintf(stderr, "monotone_open() failed: %s\n", monotone_error(env));
+		return EXIT_FAILURE;
+	}
+
+	// show statistics
+	execute(env, "show partitions");
 
 	// read all events, starting from zero
 	monotone_event_t key =
@@ -94,6 +146,16 @@ main(int argc, char* argv[])
 		if (rc == 0)
 			break;
 
+		// mark event for deletion and delete
+		event.flags = MONOTONE_DELETE;
+		rc = monotone_write(env, &event, 1);
+		if (rc == -1)
+		{
+			monotone_free(env);
+			fprintf(stderr, "monotone_write() failed: %s\n", monotone_error(env));
+			return EXIT_FAILURE;
+		}
+
 		total++;
 
 		// iterate forward
@@ -108,22 +170,30 @@ main(int argc, char* argv[])
 	printf("total: %d\n\n", total);
 
 	// show statistics
-	char* result = NULL;
-	rc = monotone_execute(env, "show storages", &result);
-	if (rc == -1)
-		fprintf(stderr, "monotone_execute() failed: %s\n", monotone_error(env));
-	if (result)
-	{
-		printf("%s\n", result);
-		free(result);
-	}
+	execute(env, "show partitions");
+
+	// refresh
+	execute(env, "refresh partition 0");
+
+	// show statistics
+	execute(env, "show partitions");
 
 	monotone_free(cursor);
 	monotone_free(env);
+	return 0;
+}
 
-	// unused
+int
+main(int argc, char* argv[])
+{
 	(void)argc;
 	(void)argv;
 
-	return EXIT_SUCCESS;
+	// create, write events and close
+	int rc = prepare();
+	if (rc != 0)
+		return rc;
+
+	// open, read and delete events
+	return process_1_by_1();
 }

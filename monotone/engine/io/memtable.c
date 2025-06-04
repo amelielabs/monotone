@@ -89,25 +89,30 @@ hot static inline
 rbtree_get(memtable_find, memtable_compare(arg, memtable_page_of(n), key))
 
 hot static inline MemtablePage*
+memtable_search_page_for_write(Memtable*    self,
+                               Event*       key,
+                               int*         page_rel,
+                               RbtreeNode** page_ref)
+{
+	// page[n].min <= key && key < page[n + 1].min
+	*page_rel = memtable_find(&self->tree, self, key, page_ref);
+	assert(*page_ref != NULL);
+	auto page = memtable_page_of(*page_ref);
+	if (*page_rel == 1)
+	{
+		auto prev = rbtree_prev(&self->tree, *page_ref);
+		if (prev)
+			page = memtable_page_of(prev);
+	}
+	return page;
+}
+
+hot static inline MemtablePage*
 memtable_search_page(Memtable* self, Event* key)
 {
-	if (self->count_pages == 1)
-	{
-		auto first = rbtree_min(&self->tree);
-		return container_of(first, MemtablePage, node);
-	}
-
-	// page[n].min <= key && key < page[n + 1].min
-	RbtreeNode* part_ptr = NULL;
-	int rc = memtable_find(&self->tree, self, key, &part_ptr);
-	assert(part_ptr != NULL);
-	if (rc == 1)
-	{
-		auto prev = rbtree_prev(&self->tree, part_ptr);
-		if (prev)
-			part_ptr = prev;
-	}
-	return container_of(part_ptr, MemtablePage, node);
+	RbtreeNode* page_ref;
+	int page_rel;
+	return memtable_search_page_for_write(self, key, &page_rel, &page_ref);
 }
 
 hot static inline int
@@ -137,48 +142,6 @@ memtable_search(Memtable* self, MemtablePage* page, Event* key, bool* match)
 	}
 	return min;
 }
-
-#if 0
-hot static inline int
-memtable_search(Memtable* self, MemtablePage* page, void* key, bool* match)
-{
-	int pos = page->events_count - 1;
-	while (pos >= 0)
-	{
-		int rc = self->compare(self, page->events[pos], key);
-		if (rc == 0) {
-			*match = true;
-			break;
-		}
-		// range[pos] < key
-		if (rc < 0)
-			break;
-		pos--;
-	}
-	return pos;
-}
-#endif
-
-#if 0
-hot static inline int
-range_search(Ref self, RangeTree* tree, Ref key, bool* match)
-{
-	int pos = range_of(self, tree)->events_count - 1;
-	while (pos >= 0)
-	{
-		int rc = range_compare(tree, range_key(self, tree, pos), key);
-		if (rc == 0) {
-			*match = true;
-			break;
-		}
-		// range[pos] < key
-		if (rc < 0)
-			break;
-		pos--;
-	}
-	return pos;
-}
-#endif
 
 hot static inline void
 memtable_sync(Memtable* self, MemtablePage* page, MemtablePage* split, int pos)
@@ -271,8 +234,11 @@ memtable_set(Memtable* self, Event* event)
 	auto prev = memtable_insert(self, page, &page_split, event);
 	if (page_split)
 	{
-		// update split page
-		rbtree_set(&self->tree, &page->node, -1, &page_split->node);
+		// handle page split
+		RbtreeNode* page_ref;
+		int page_rel;
+		memtable_search_page_for_write(self, page_split->events[0], &page_rel, &page_ref);
+		rbtree_set(&self->tree, page_ref, page_rel, &page_split->node);
 		self->count_pages++;
 	}
 	return prev;
