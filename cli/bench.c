@@ -333,6 +333,259 @@ bench_select(Bench* self, uint64_t from, uint64_t count)
 	printf("read time:    %.1f secs\n", diff);
 }
 
+static void*
+bench_write(Bench* self)
+{
+	Instance* current = &self->instances[0];
+	BenchConfig* config = self->config;
+
+	uint8_t data[config->size_event];
+	memset(data, 0, sizeof(data));
+
+	float* metrics = (float*)data;
+	for (int i = 0; i < config->size_event / config->size_metric; i++)
+		metrics[i] = i + 0.345;
+
+	monotone_event_t batch[config->size_batch];
+
+	for (int j = 0; j < 10000; j ++)
+	{
+		for (int i = 0; i < config->size_batch; i++)
+		{
+			auto ev = &batch[i];
+			ev->flags      = 0;
+			ev->id         = UINT64_MAX;
+			ev->key        = NULL;
+			ev->key_size   = 0;
+			ev->value      = data;
+			ev->value_size = sizeof(data);
+		}
+
+		int rc;
+		rc = monotone_write(current->env, batch, config->size_batch);
+		if (rc == -1)
+		{
+			printf("error: %s\n", monotone_error(current->env));
+			continue;
+		}
+
+		atomic_u64_add(&current->written, config->size_batch);
+		atomic_u64_add(&current->written_bytes, config->size_batch * (sizeof(Event) + sizeof(data)));
+	}
+
+	return NULL;
+}
+
+static void
+bench_delete(Bench* self)
+{
+    Instance* current = &self->instances[0];
+
+	monotone_event_t key;
+	key.flags      = 0;
+	key.id         = 0;
+	key.key        = NULL;
+	key.key_size   = 0;
+	key.value      = NULL;
+	key.value_size = 0;
+
+	auto cursor = monotone_cursor(current->env, NULL, &key);
+	if (cursor == NULL)
+	{
+		printf("error: %s\n", monotone_error(current->env));
+		return;
+	}
+
+	while(true)
+	{
+	    monotone_event_t event;
+		int rc = monotone_read(cursor, &event);
+		if (rc == -1)
+		{
+			printf("error: %s\n", monotone_error(current->env));
+			break;
+		}
+		if (rc == 0)
+			break;
+
+		event.flags = 1;
+		monotone_event_t batch[] = {event};
+		rc = monotone_write(current->env, batch, 1);
+		if (rc == -1)
+		{
+			printf("write error: %s\n", monotone_error(current->env));
+			break;
+		}
+
+		rc = monotone_next(cursor);
+		if (rc == -1)
+		{
+			printf("error: %s\n", monotone_error(current->env));
+			break;
+		}
+	}
+
+	monotone_free(cursor);
+}
+
+static void*
+instance_writer_test(void* arg)
+{
+	Instance* self = arg;
+	BenchConfig* config = self->config;
+
+	uint8_t data[config->size_event];
+	memset(data, 0, sizeof(data));
+
+	float* metrics = (float*)data;
+	for (int i = 0; i < config->size_event / config->size_metric; i++)
+		metrics[i] = i + 0.345;
+
+	uint64_t total = 0;
+	uint64_t id = 0;
+	while (self->writer_active && total < 2000000)
+	{
+	    monotone_event_t batch[1];
+		auto ev = &batch[0];
+		ev->flags      = 0;
+		ev->id         = id;
+		ev->key        = NULL;
+		ev->key_size   = 0;
+		ev->value      = data;
+		ev->value_size = sizeof(data);
+
+		int rc;
+		rc = monotone_write(self->env, batch, 1);
+		if (rc == -1)
+		{
+			printf("error: %s\n", monotone_error(self->env));
+			continue;
+		}
+
+		total++;
+		id++;
+	}
+
+	printf("write: %ld\n", total);
+
+	return NULL;
+}
+
+static void*
+instance_reader_test(void* arg)
+{
+	Instance* self = arg;
+
+	uint64_t cont_id = 0;
+	bool fail = false;
+	uint64_t total = 0;
+	uint64_t prev_id = 0;
+	while (self->writer_active && !fail && total < 2000000)
+	{
+        monotone_event_t key;
+    	key.flags      = 0;
+    	key.id         = cont_id;
+    	key.key        = NULL;
+    	key.key_size   = 0;
+    	key.value      = NULL;
+    	key.value_size = 0;
+
+    	auto cursor = monotone_cursor(self->env, NULL, &key);
+    	if (cursor == NULL)
+    	{
+    		printf("error: %s\n", monotone_error(self->env));
+    		return NULL;
+    	}
+
+        printf("create cursor: %ld\n", key.id);
+
+        while (true)
+    	{
+            monotone_event_t event;
+    		int rc = monotone_read(cursor, &event);
+    		if (rc == -1)
+    		{
+    			printf("error: %s\n", monotone_error(self->env));
+                fail = true;
+    			break;
+    		}
+    		if (rc == 0)
+    			break;
+
+            if ((event.id - prev_id) > 1)
+            {
+                printf("too fast: cid:%ld, eid:%ld, pid:%ld\n", cont_id, event.id, prev_id);
+                // cont_id = 0;
+                // prev_id = 0;
+                // total = 0;
+                break;
+            }
+
+            if (prev_id != event.id)
+            {
+                total++;
+            }
+
+            cont_id = event.id;
+
+            printf("total: %ld, id: %ld\n", total, event.id);
+
+            if (prev_id != 0 && !((event.id-prev_id) == 1 || (event.id-prev_id) == 0))
+            {
+                printf("not found: cid:%ld, eid:%ld, pid:%ld\n", cont_id, event.id, prev_id);
+            }
+            prev_id = event.id;
+
+    		rc = monotone_next(cursor);
+    		if (rc == -1)
+    		{
+    			printf("error: %s\n", monotone_error(self->env));
+                fail = true;
+    			break;
+    		}
+    	}
+
+        monotone_free(cursor);
+        sleep(3);
+	}
+
+	printf("read: %ld\n", total);
+
+	return NULL;
+}
+
+static void
+bench_par(Bench* self)
+{
+    auto ref = &self->instances[0];
+	ref->writer_active = true;
+	pthread_create(&ref->writer_id, NULL, instance_writer_test, ref);
+	pthread_create(&self->report_id, NULL, instance_reader_test, ref);
+
+	sleep(20);
+
+	ref->writer_active = false;
+	pthread_join(ref->writer_id, NULL);
+	pthread_join(self->report_id, NULL);
+}
+
+static void bench_execute(Bench* self, char* command)
+{
+    auto current = &self->instances[0];
+	char* result = NULL;
+	int rc = monotone_execute(current->env, command, &result);
+	if (rc == -1)
+	{
+		printf("error: %s\n", monotone_error(current->env));
+		return;
+	}
+	if (result)
+	{
+		printf("%s\n", result);
+		free(result);
+	}
+}
+
 static void
 bench_help(Bench* self)
 {
@@ -421,6 +674,28 @@ bench_cli(Bench* self)
 
 		if (! strcmp(command, "/exit"))
 			break;
+
+		if (! strcmp(command, "/test1"))
+		{
+		    printf("start writing...\n");
+			bench_write(self);
+			printf("writing finished\n");
+			bench_execute(self, "show partitions");
+			printf("start deleting...\n");
+			bench_delete(self);
+			printf("deletion finished\n");
+			bench_execute(self, "show partitions");
+			printf("refresh partition\n");
+			bench_execute(self, "refresh partition 0");
+			bench_execute(self, "show partitions");
+			continue;
+		}
+
+		if (! strcmp(command, "/test2"))
+		{
+		    bench_par(self);
+			continue;
+		}
 
 		auto current = &self->instances[atomic_u32_of(&self->current)];
 		char* result = NULL;
