@@ -1,0 +1,94 @@
+#
+
+init
+set workers to 0
+set workers_upload to 0
+#set interval to 10
+set wal to true
+set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+set compression to ''
+set sync to false
+open
+
+# test: create two partitions
+insert 0
+insert 1
+insert 2
+
+insert 3000000
+insert 3000001
+insert 3000002
+
+# test: close/open
+close
+
+init
+set workers to 0
+set workers_upload to 0
+#set interval to 10
+set wal to true
+set sync to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+files 00000000-0000-0000-0000-000000000000
+
+# test: drop the second partition (memtable only)
+drop partition 3000000
+
+# test: close/open
+close
+
+init
+set workers to 0
+set workers_upload to 0
+#set interval to 10
+set wal to true
+set sync to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+files 00000000-0000-0000-0000-000000000000
+
+# test: create second partition again
+insert 3000000
+insert 3000001
+insert 3000002
+
+# test: close/open
+close
+
+init
+set workers to 0
+set workers_upload to 0
+#set interval to 10
+set wal to true
+set sync to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+files 00000000-0000-0000-0000-000000000000
+
+# test: validate partition
+show partitions debug
+show config
+show wal
+show storage main
+
+close
+
+init
+set workers to 0
+set workers_upload to 0
+#set interval to 10
+set wal to true
+set sync to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+files 00000000-0000-0000-0000-000000000000
+
+# test: validate partition
+show partitions debug
+show config
+show wal
+show storage main
+
+close

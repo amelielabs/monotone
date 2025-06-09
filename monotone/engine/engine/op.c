@@ -235,7 +235,7 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists,
 }
 
 static bool
-engine_drop_reference(Engine* self, uint64_t min)
+engine_drop_reference(Engine* self, uint64_t min, bool wal_write)
 {
 	// take exclusive control lock
 	control_lock_exclusive();
@@ -271,7 +271,7 @@ engine_drop_reference(Engine* self, uint64_t min)
 	ref_free(ref);
 
 	// wal write
-	if (var_int_of(&config()->wal))
+	if (wal_write && var_int_of(&config()->wal))
 	{
 		LogDrop drop;
 		log_drop_init(&drop, min);
@@ -286,7 +286,7 @@ engine_drop_reference(Engine* self, uint64_t min)
 }
 
 void
-engine_drop(Engine* self, uint64_t min, bool if_exists, int mask)
+engine_drop(Engine* self, uint64_t min, bool wal_write, bool if_exists, int mask)
 {
 	// partition drop
 	if (mask == (ID|ID_CLOUD))
@@ -301,7 +301,7 @@ engine_drop(Engine* self, uint64_t min, bool if_exists, int mask)
 
 			// try to drop partition mapping, or retry drop if
 			// partition still has files
-			if (engine_drop_reference(self, min))
+			if (engine_drop_reference(self, min, wal_write))
 				break;
 		}
 
@@ -317,7 +317,7 @@ engine_drop_range(Engine* self, uint64_t min, uint64_t max, int mask)
 {
 	uint64_t next;
 	for (; engine_foreach(self, &min, &next, max); min = next)
-		engine_drop(self, min, true, mask);
+		engine_drop(self, min, true, true, mask);
 }
 
 void
@@ -467,7 +467,7 @@ engine_refresh(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
 	engine_download(self, min, if_exists, true);
 
 	// drop partition from cloud
-	engine_drop(self, min, if_exists, ID_CLOUD);
+	engine_drop(self, min, true, if_exists, ID_CLOUD);
 
 	// refresh partition
 	refresh_reset(refresh);
@@ -585,7 +585,7 @@ engine_rebalance(Engine* self, Refresh* refresh)
 		if (! engine_rebalance_next(self, &min, &storage))
 			break;
 		if (str_empty(&storage))
-			engine_drop(self, min, true, ID|ID_CLOUD);
+			engine_drop(self, min, true, true, ID|ID_CLOUD);
 		else
 			engine_refresh(self, refresh, min, &storage, true);
 	}
@@ -693,7 +693,7 @@ engine_service(Engine* self, Refresh* refresh, ServiceFilter filter, bool wait)
 				engine_drop_file(self, req->id, true, true, ID);
 				break;
 			case ACTION_DROP_ON_CLOUD:
-				engine_drop(self, req->id, true, ID_CLOUD);
+				engine_drop(self, req->id, true, true, ID_CLOUD);
 				break;
 			case ACTION_REFRESH:
 				refresh_reset(refresh);

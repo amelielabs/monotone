@@ -56,3 +56,8 @@ test crash
 directory s3
 group_optional s3
 test s3
+
+# github
+directory github
+group github
+test gh_3

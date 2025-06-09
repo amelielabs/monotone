@@ -14,7 +14,7 @@
 // operations
 void engine_fill_nolock(Engine*, uint64_t, uint64_t);
 void engine_fill(Engine*, uint64_t, uint64_t);
-void engine_drop(Engine*, uint64_t, bool, int);
+void engine_drop(Engine*, uint64_t, bool, bool, int);
 void engine_drop_range(Engine*, uint64_t, uint64_t, int);
 
 // cloud

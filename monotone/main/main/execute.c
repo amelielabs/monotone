@@ -379,7 +379,7 @@ execute_partition_drop(Executable* self)
 	auto cmd = cmd_partition_of(self->cmd);
 
 	// drop partition
-	engine_drop(&self->main->engine, cmd->min, cmd->if_exists, cmd->mask);
+	engine_drop(&self->main->engine, cmd->min, true, cmd->if_exists, cmd->mask);
 }
 
 static void
