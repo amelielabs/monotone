@@ -1,0 +1,168 @@
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set wal to true
+set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+set compression to ''
+set sync to false
+open
+# test: create partition
+insert 0
+insert 1
+insert 2
+insert 10
+insert 11
+insert 12
+show partitions debug
+[{
+  "min": 0,
+  "max": 9,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "created": "(filtered)",
+  "refreshed": "(filtered)",
+  "refreshes": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 19,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "created": "(filtered)",
+  "refreshed": "(filtered)",
+  "refreshes": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+files 00000000-0000-0000-0000-000000000000
+select
+[0]
+[1]
+[2]
+[10]
+[11]
+[12]
+(eof)
+# test: close/open
+close
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set wal to true
+set sync to false
+open
+files 00000000-0000-0000-0000-000000000000
+# test: validate partition
+show partitions debug
+[{
+  "min": 0,
+  "max": 9,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "created": "(filtered)",
+  "refreshed": "(filtered)",
+  "refreshes": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 19,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "created": "(filtered)",
+  "refreshed": "(filtered)",
+  "refreshes": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[0]
+[1]
+[2]
+[10]
+[11]
+[12]
+(eof)
+# test: drop the second partition (memtable only)
+drop partition 0
+show partitions debug
+[{
+  "min": 10,
+  "max": 19,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "created": "(filtered)",
+  "refreshed": "(filtered)",
+  "refreshes": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+# test: close/open
+close
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set wal to true
+set sync to false
+open
+files 00000000-0000-0000-0000-000000000000
+# test: validate partition
+show partitions debug
+[{
+  "min": 10,
+  "max": 19,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "created": "(filtered)",
+  "refreshed": "(filtered)",
+  "refreshes": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[10]
+[11]
+[12]
+(eof)
+close
