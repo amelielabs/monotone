@@ -60,4 +60,26 @@ files 00000000-0000-0000-0000-000000000000
 show partitions debug
 select
 
+# test: create second partition again
+insert 3000000
+insert 3000001
+insert 3000002
+show partitions debug
+
+# test: close/open
+close
+
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set wal to true
+set sync to false
+open
+files 00000000-0000-0000-0000-000000000000
+
+# test: validate partition
+show partitions debug
+select
+
 close
