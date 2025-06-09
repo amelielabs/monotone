@@ -46,6 +46,7 @@ test wal
 test wal_crc
 test recovery_config
 test recovery_memtable
+test recovery_memtable_serial
 test recovery_storage
 test recovery_cloud
 test recovery_serial

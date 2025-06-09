@@ -2,22 +2,23 @@ init
 set workers to 0
 set workers_upload to 0
 set wal to true
-set serial to false
+set serial to true
 set uuid to '00000000-0000-0000-0000-000000000000'
 set compression to ''
 set sync to false
+set interval to 3
 open
 # test: create two partitions
-insert 0
-insert 1
-insert 2
-insert 3000000
-insert 3000001
-insert 3000002
+insert -1
+insert -1
+insert -1
+insert -1
+insert -1
+insert -1
 show partitions debug
 [{
   "min": 0,
-  "max": 2999999,
+  "max": 2,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -32,8 +33,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 3000000,
-  "max": 5999999,
+  "min": 3,
+  "max": 5,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -51,7 +52,7 @@ show partitions debug
 show partitions debug
 [{
   "min": 0,
-  "max": 2999999,
+  "max": 2,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -66,8 +67,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 3000000,
-  "max": 5999999,
+  "min": 3,
+  "max": 5,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -87,24 +88,26 @@ select
 [0]
 [1]
 [2]
-[3000000]
-[3000001]
-[3000002]
+[3]
+[4]
+[5]
 (eof)
 # test: close/open
 close
 init
 set workers to 0
 set workers_upload to 0
+set serial to true
 set wal to true
 set sync to false
+set interval to 3
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partition
 show partitions debug
 [{
   "min": 0,
-  "max": 2999999,
+  "max": 2,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -119,8 +122,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 3000000,
-  "max": 5999999,
+  "min": 3,
+  "max": 5,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -138,7 +141,7 @@ show partitions debug
 show partitions debug
 [{
   "min": 0,
-  "max": 2999999,
+  "max": 2,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -153,8 +156,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 3000000,
-  "max": 5999999,
+  "min": 3,
+  "max": 5,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -173,16 +176,16 @@ select
 [0]
 [1]
 [2]
-[3000000]
-[3000001]
-[3000002]
+[3]
+[4]
+[5]
 (eof)
 # test: drop the second partition (memtable only)
-drop partition 3000000
+drop partition 3
 show partitions debug
 [{
   "min": 0,
-  "max": 2999999,
+  "max": 2,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -202,15 +205,17 @@ close
 init
 set workers to 0
 set workers_upload to 0
+set serial to true
 set wal to true
 set sync to false
+set interval to 3
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partition
 show partitions debug
 [{
   "min": 0,
-  "max": 2999999,
+  "max": 2,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -228,7 +233,7 @@ show partitions debug
 show partitions debug
 [{
   "min": 0,
-  "max": 2999999,
+  "max": 2,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -249,13 +254,13 @@ select
 [2]
 (eof)
 # test: create second partition again
-insert 3000000
-insert 3000001
-insert 3000002
+insert -1
+insert -1
+insert -1
 show partitions debug
 [{
   "min": 0,
-  "max": 2999999,
+  "max": 2,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -270,8 +275,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 3000000,
-  "max": 5999999,
+  "min": 3,
+  "max": 5,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -289,7 +294,7 @@ show partitions debug
 show partitions debug
 [{
   "min": 0,
-  "max": 2999999,
+  "max": 2,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -304,8 +309,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 3000000,
-  "max": 5999999,
+  "min": 3,
+  "max": 5,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -325,15 +330,17 @@ close
 init
 set workers to 0
 set workers_upload to 0
+set serial to true
 set wal to true
 set sync to false
+set interval to 3
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partition
 show partitions debug
 [{
   "min": 0,
-  "max": 2999999,
+  "max": 2,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -348,8 +355,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 3000000,
-  "max": 5999999,
+  "min": 3,
+  "max": 5,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -367,7 +374,7 @@ show partitions debug
 show partitions debug
 [{
   "min": 0,
-  "max": 2999999,
+  "max": 2,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -382,8 +389,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 3000000,
-  "max": 5999999,
+  "min": 3,
+  "max": 5,
   "events": 3,
   "events_heap": 3,
   "regions": 0,
@@ -402,8 +409,8 @@ select
 [0]
 [1]
 [2]
-[3000000]
-[3000001]
-[3000002]
+[3]
+[4]
+[5]
 (eof)
 close

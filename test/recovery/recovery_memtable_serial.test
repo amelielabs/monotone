@@ -4,20 +4,21 @@ init
 set workers to 0
 set workers_upload to 0
 set wal to true
-set serial to false
+set serial to true
 set uuid to '00000000-0000-0000-0000-000000000000'
 set compression to ''
 set sync to false
+set interval to 3
 open
 
 # test: create two partitions
-insert 0
-insert 1
-insert 2
+insert -1
+insert -1
+insert -1
 
-insert 3000000
-insert 3000001
-insert 3000002
+insert -1
+insert -1
+insert -1
 
 show partitions debug
 show partitions debug
@@ -30,8 +31,10 @@ close
 init
 set workers to 0
 set workers_upload to 0
+set serial to true
 set wal to true
 set sync to false
+set interval to 3
 open
 files 00000000-0000-0000-0000-000000000000
 
@@ -41,7 +44,7 @@ show partitions debug
 select
 
 # test: drop the second partition (memtable only)
-drop partition 3000000
+drop partition 3
 show partitions debug
 
 # test: close/open
@@ -50,8 +53,10 @@ close
 init
 set workers to 0
 set workers_upload to 0
+set serial to true
 set wal to true
 set sync to false
+set interval to 3
 open
 files 00000000-0000-0000-0000-000000000000
 
@@ -61,9 +66,10 @@ show partitions debug
 select
 
 # test: create second partition again
-insert 3000000
-insert 3000001
-insert 3000002
+insert -1
+insert -1
+insert -1
+
 show partitions debug
 show partitions debug
 
@@ -73,8 +79,10 @@ close
 init
 set workers to 0
 set workers_upload to 0
+set serial to true
 set wal to true
 set sync to false
+set interval to 3
 open
 files 00000000-0000-0000-0000-000000000000
 
