@@ -8,7 +8,7 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 set compression to ''
 set sync to false
 open
-# test: create partition
+# test: create two partitions
 insert 0
 insert 1
 insert 2
