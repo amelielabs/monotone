@@ -3,7 +3,7 @@
 init
 set workers to 0
 set workers_upload to 0
-set interval to 10
+#set interval to 10
 set wal to true
 set serial to false
 set uuid to '00000000-0000-0000-0000-000000000000'
@@ -16,9 +16,9 @@ insert 0
 insert 1
 insert 2
 
-insert 10
-insert 11
-insert 12
+insert 3000000
+insert 3000001
+insert 3000002
 
 show partitions debug
 files 00000000-0000-0000-0000-000000000000
@@ -41,7 +41,7 @@ show partitions debug
 select
 
 # test: drop the second partition (memtable only)
-drop partition 0
+drop partition 3000000
 show partitions debug
 
 # test: close/open
