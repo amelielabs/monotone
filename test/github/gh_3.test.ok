@@ -1,0 +1,268 @@
+init
+set workers to 0
+set workers_upload to 0
+set wal to true
+set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+set compression to ''
+set sync to false
+open
+# test: create two partitions
+insert 0
+insert 1
+insert 2
+insert 3000000
+insert 3000001
+insert 3000002
+# test: close/open
+close
+init
+set workers to 0
+set workers_upload to 0
+set wal to true
+set sync to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+files 00000000-0000-0000-0000-000000000000
+# test: drop the second partition (memtable only)
+drop partition 3000000
+# test: close/open
+close
+init
+set workers to 0
+set workers_upload to 0
+set wal to true
+set sync to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+files 00000000-0000-0000-0000-000000000000
+# test: create second partition again
+insert 3000000
+insert 3000001
+insert 3000002
+# test: close/open
+close
+init
+set workers to 0
+set workers_upload to 0
+set wal to true
+set sync to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+files 00000000-0000-0000-0000-000000000000
+# test: validate partition
+show partitions debug
+[{
+  "min": 0,
+  "max": 2999999,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "created": "(filtered)",
+  "refreshed": "(filtered)",
+  "refreshes": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 3000000,
+  "max": 5999999,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "created": "(filtered)",
+  "refreshed": "(filtered)",
+  "refreshes": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+show config
+{
+  "version": "1.0.0",
+  "uuid": "00000000-0000-0000-0000-000000000000",
+  "directory": "_output",
+  "log": true,
+  "log_to_file": true,
+  "log_to_stdout": false,
+  "mm_page_size": 2097152,
+  "mm_limit": false,
+  "mm_limit_wm": 8589934592,
+  "mm_limit_behaviour": "block",
+  "mm_cache": 8589934592,
+  "wal": true,
+  "wal_rotate_wm": 104857600,
+  "wal_sync_on_rotate": true,
+  "wal_sync_on_write": false,
+  "wal_crc": false,
+  "serial": false,
+  "interval": 3000000,
+  "compression": "",
+  "compression_level": 0,
+  "workers": 0,
+  "workers_upload": 0,
+  "ssn": 0,
+  "lsn": 9
+}
+show wal
+{
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
+  "crc": false,
+  "lsn": 9,
+  "lsn_min": 1,
+  "files": 1
+}
+show storage main
+{
+  "config": {
+    "uuid": "00000000-0000-0000-0000-000000000000",
+    "name": "main",
+    "path": "",
+    "cloud": "",
+    "cloud_drop_local": true,
+    "sync": true,
+    "crc": false,
+    "refresh_wm": 41943040,
+    "region_size": 131072,
+    "compression": "",
+    "compression_level": 0,
+    "encryption": ""
+  },
+  "stats": {
+    "min": 0,
+    "max": 5999999,
+    "partitions": 2,
+    "partitions_local": 0,
+    "partitions_cloud": 0,
+    "regions": 0,
+    "events": 6,
+    "events_heap": 6,
+    "size": 0,
+    "size_uncompressed": 0,
+    "size_heap": 4194304
+  }
+}
+close
+init
+set workers to 0
+set workers_upload to 0
+set wal to true
+set sync to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+files 00000000-0000-0000-0000-000000000000
+# test: validate partition
+show partitions debug
+[{
+  "min": 0,
+  "max": 2999999,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "created": "(filtered)",
+  "refreshed": "(filtered)",
+  "refreshes": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 3000000,
+  "max": 5999999,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "created": "(filtered)",
+  "refreshed": "(filtered)",
+  "refreshes": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+show config
+{
+  "version": "1.0.0",
+  "uuid": "00000000-0000-0000-0000-000000000000",
+  "directory": "_output",
+  "log": true,
+  "log_to_file": true,
+  "log_to_stdout": false,
+  "mm_page_size": 2097152,
+  "mm_limit": false,
+  "mm_limit_wm": 8589934592,
+  "mm_limit_behaviour": "block",
+  "mm_cache": 8589934592,
+  "wal": true,
+  "wal_rotate_wm": 104857600,
+  "wal_sync_on_rotate": true,
+  "wal_sync_on_write": false,
+  "wal_crc": false,
+  "serial": false,
+  "interval": 3000000,
+  "compression": "",
+  "compression_level": 0,
+  "workers": 0,
+  "workers_upload": 0,
+  "ssn": 0,
+  "lsn": 9
+}
+show wal
+{
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
+  "crc": false,
+  "lsn": 9,
+  "lsn_min": 1,
+  "files": 1
+}
+show storage main
+{
+  "config": {
+    "uuid": "00000000-0000-0000-0000-000000000000",
+    "name": "main",
+    "path": "",
+    "cloud": "",
+    "cloud_drop_local": true,
+    "sync": true,
+    "crc": false,
+    "refresh_wm": 41943040,
+    "region_size": 131072,
+    "compression": "",
+    "compression_level": 0,
+    "encryption": ""
+  },
+  "stats": {
+    "min": 0,
+    "max": 5999999,
+    "partitions": 2,
+    "partitions_local": 0,
+    "partitions_cloud": 0,
+    "regions": 0,
+    "events": 6,
+    "events_heap": 6,
+    "size": 0,
+    "size_uncompressed": 0,
+    "size_heap": 4194304
+  }
+}
+close
