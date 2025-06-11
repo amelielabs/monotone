@@ -22,6 +22,7 @@ void
 wal_init(Wal* self)
 {
 	self->current = NULL;
+	self->dirfd   = -1;
 	mutex_init(&self->lock);
 	wal_id_init(&self->list);
 }
@@ -29,6 +30,11 @@ wal_init(Wal* self)
 void
 wal_free(Wal* self)
 {
+	if (self->dirfd != -1)
+	{
+		close(self->dirfd);
+		self->dirfd = -1;
+	}
 	if (self->current)
 	{
 		auto file = self->current;
@@ -65,6 +71,11 @@ wal_rotate(Wal* self, uint64_t wm)
 	{
 		file = wal_file_allocate(next_lsn);
 		wal_file_create(file);
+
+		// sync directory
+		if (var_int_of(&config()->wal_sync_on_create) && config_sync())
+			if (vfs_sync(self->dirfd) == -1)
+				error_system();
 	}
 	if (leave(&e))
 	{
@@ -119,6 +130,11 @@ wal_gc(Wal* self, uint64_t snapshot)
 			         ids[i]);
 			fs_unlink("%s", path);
 		}
+
+		// sync directory
+		if (var_int_of(&config()->wal_sync_on_rotate) && config_sync())
+			if (vfs_sync(self->dirfd) == -1)
+				error_system();
 	}
 }
 
@@ -143,7 +159,7 @@ closedir_guard(DIR* self)
 }
 
 static void
-wal_recover(Wal* self, char *path)
+wal_recover(Wal* self, char* path)
 {
 	// open and read log directory
 	DIR* dir = opendir(path);
@@ -176,6 +192,11 @@ wal_open(Wal* self)
 		log("wal: new directory '%s'", path);
 		fs_mkdir(0755, "%s", path);
 	}
+
+	// open and keep directory fd to support sync
+	self->dirfd = vfs_open(path, O_DIRECTORY|O_RDONLY, 0);
+	if (self->dirfd == -1)
+		error_system();
 
 	// read file list
 	wal_recover(self, path);
@@ -244,7 +265,7 @@ wal_show(Wal* self, Buf* buf)
 	wal_id_stats(&self->list, &list_count, &list_min);
 
 	// map
-	encode_map(buf, 8);
+	encode_map(buf, 9);
 
 	// active
 	encode_raw(buf, "active", 6);
@@ -253,6 +274,10 @@ wal_show(Wal* self, Buf* buf)
 	// rotate_wm
 	encode_raw(buf, "rotate_wm", 9);
 	encode_integer(buf, var_int_of(&config()->wal_rotate_wm));
+
+	// sync_on_create
+	encode_raw(buf, "sync_on_create", 14);
+	encode_bool(buf, var_int_of(&config()->wal_sync_on_create));
 
 	// sync_on_rotate
 	encode_raw(buf, "sync_on_rotate", 14);

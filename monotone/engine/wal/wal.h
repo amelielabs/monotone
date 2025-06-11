@@ -18,6 +18,7 @@ struct Wal
 	Mutex    lock;
 	WalId    list;
 	WalFile* current;
+	int      dirfd;
 };
 
 void wal_init(Wal*);

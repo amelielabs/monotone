@@ -16,6 +16,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -35,6 +36,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -50,6 +52,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -67,6 +70,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -85,6 +89,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -111,6 +116,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -135,6 +141,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -155,6 +162,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -175,6 +183,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -201,6 +210,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -220,6 +230,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -282,6 +293,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -342,6 +354,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -393,6 +406,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -463,6 +477,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -521,6 +536,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,
@@ -575,6 +591,7 @@ show wal
 {
   "active": true,
   "rotate_wm": 104857600,
+  "sync_on_create": true,
   "sync_on_rotate": true,
   "sync_on_write": false,
   "crc": false,

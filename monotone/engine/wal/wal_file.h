@@ -52,6 +52,8 @@ wal_file_create(WalFile* self)
 	         config_directory(),
 	         self->id);
 	file_create(&self->file, path);
+	if (var_int_of(&config()->wal_sync_on_create) && config_sync())
+		file_sync(&self->file);
 }
 
 static inline void

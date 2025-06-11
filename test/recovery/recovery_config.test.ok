@@ -36,6 +36,7 @@ show all
   "mm_cache": 8589934592,
   "wal": true,
   "wal_rotate_wm": 104857600,
+  "wal_sync_on_create": true,
   "wal_sync_on_rotate": true,
   "wal_sync_on_write": false,
   "wal_crc": false,
