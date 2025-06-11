@@ -98,7 +98,7 @@ wal_rotate(Wal* self, uint64_t wm)
 	// sync and close prev file
 	if (file_prev)
 	{
-		if (var_int_of(&config()->wal_sync_on_rotate) && config_sync())
+		if (var_int_of(&config()->wal_sync_on_close) && config_sync())
 			file_sync(&file_prev->file);
 		wal_file_close(file_prev);
 		wal_file_free(file_prev);
@@ -132,7 +132,7 @@ wal_gc(Wal* self, uint64_t snapshot)
 		}
 
 		// sync directory
-		if (var_int_of(&config()->wal_sync_on_rotate) && config_sync())
+		if (var_int_of(&config()->wal_sync_on_close) && config_sync())
 			if (vfs_sync(self->dirfd) == -1)
 				error_system();
 	}
@@ -279,9 +279,9 @@ wal_show(Wal* self, Buf* buf)
 	encode_raw(buf, "sync_on_create", 14);
 	encode_bool(buf, var_int_of(&config()->wal_sync_on_create));
 
-	// sync_on_rotate
-	encode_raw(buf, "sync_on_rotate", 14);
-	encode_bool(buf, var_int_of(&config()->wal_sync_on_rotate));
+	// sync_on_close
+	encode_raw(buf, "sync_on_close", 13);
+	encode_bool(buf, var_int_of(&config()->wal_sync_on_close));
 
 	// sync_on_write
 	encode_raw(buf, "sync_on_write", 13);

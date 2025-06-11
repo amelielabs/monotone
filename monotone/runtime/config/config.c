@@ -97,7 +97,7 @@ config_prepare(Config* self)
 		{ "wal",                     VAR_BOOL,   VAR_C,                &self->wal,                     NULL,        true             },
 		{ "wal_rotate_wm",           VAR_INT,    VAR_C|VAR_R,          &self->wal_rotate_wm,           NULL,        104857600        },
 		{ "wal_sync_on_create",      VAR_BOOL,   VAR_C,                &self->wal_sync_on_create,      NULL,        true             },
-		{ "wal_sync_on_rotate",      VAR_BOOL,   VAR_C,                &self->wal_sync_on_rotate,      NULL,        true             },
+		{ "wal_sync_on_close",       VAR_BOOL,   VAR_C,                &self->wal_sync_on_close,       NULL,        true             },
 		{ "wal_sync_on_write",       VAR_BOOL,   VAR_C,                &self->wal_sync_on_write,       NULL,        false            },
 		{ "wal_crc",                 VAR_BOOL,   VAR_C,                &self->wal_crc,                 NULL,        false            },
 		// engine

@@ -35,7 +35,7 @@ struct Config
 	Var  wal;
 	Var  wal_rotate_wm;
 	Var  wal_sync_on_create;
-	Var  wal_sync_on_rotate;
+	Var  wal_sync_on_close;
 	Var  wal_sync_on_write;
 	Var  wal_crc;
 	// engine
