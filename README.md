@@ -29,6 +29,8 @@ hybrid engine. Learn more about its [Architecture](ARCHITECTURE.md).
 
 Official [Documentation](https://monotone.studio/docs/).
 
+Join us on [Slack](https://amelielabs.io/slack.html).
+
 ----
 
 ### Features
