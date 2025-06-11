@@ -57,7 +57,7 @@ debug "wal_read"
 show wal
 {
   "active": true,
-  "crc": false,
+  "crc": true,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,

@@ -1,5 +1,10 @@
 #
 
+# test: wal crc (default is on)
+init
+show wal_crc
+close
+
 # test: wal crc
 init
 set workers to 0

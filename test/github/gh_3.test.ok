@@ -99,7 +99,7 @@ show config
   "mm_limit_behaviour": "block",
   "mm_cache": 8589934592,
   "wal": true,
-  "wal_crc": false,
+  "wal_crc": true,
   "wal_sync_on_create": true,
   "wal_sync_on_close": true,
   "wal_sync_on_write": false,
@@ -116,7 +116,7 @@ show config
 show wal
 {
   "active": true,
-  "crc": false,
+  "crc": true,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
@@ -213,7 +213,7 @@ show config
   "mm_limit_behaviour": "block",
   "mm_cache": 8589934592,
   "wal": true,
-  "wal_crc": false,
+  "wal_crc": true,
   "wal_sync_on_create": true,
   "wal_sync_on_close": true,
   "wal_sync_on_write": false,
@@ -230,7 +230,7 @@ show config
 show wal
 {
   "active": true,
-  "crc": false,
+  "crc": true,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
