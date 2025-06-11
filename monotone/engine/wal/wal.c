@@ -232,7 +232,7 @@ wal_write(Wal* self, Log* log)
 	config_lsn_set(log->write.lsn);
 
 	// return true if wal is ready to be rotated
-	auto wm = var_int_of(&config()->wal_rotate_wm);
+	auto wm = var_int_of(&config()->wal_size);
 	return wal_rotate_ready(self, wm);
 }
 
@@ -253,7 +253,7 @@ wal_write_op(Wal* self, LogWrite* write)
 	config_lsn_set(write->lsn);
 
 	// return true if wal is ready to be rotated
-	auto wm = var_int_of(&config()->wal_rotate_wm);
+	auto wm = var_int_of(&config()->wal_size);
 	return wal_rotate_ready(self, wm);
 }
 
@@ -271,9 +271,10 @@ wal_show(Wal* self, Buf* buf)
 	encode_raw(buf, "active", 6);
 	encode_bool(buf, var_int_of(&config()->wal));
 
-	// rotate_wm
-	encode_raw(buf, "rotate_wm", 9);
-	encode_integer(buf, var_int_of(&config()->wal_rotate_wm));
+	// crc
+	encode_raw(buf, "crc", 3);
+	encode_bool(buf, var_int_of(&config()->wal_crc));
+
 
 	// sync_on_create
 	encode_raw(buf, "sync_on_create", 14);
@@ -287,9 +288,9 @@ wal_show(Wal* self, Buf* buf)
 	encode_raw(buf, "sync_on_write", 13);
 	encode_bool(buf, var_int_of(&config()->wal_sync_on_write));
 
-	// crc
-	encode_raw(buf, "crc", 3);
-	encode_bool(buf, var_int_of(&config()->wal_crc));
+	// size
+	encode_raw(buf, "size", 4);
+	encode_integer(buf, var_int_of(&config()->wal_size));
 
 	// lsn
 	encode_raw(buf, "lsn", 3);

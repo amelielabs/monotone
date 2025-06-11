@@ -16,11 +16,11 @@ show lsn
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": true,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": true,
+  "size": 104857600,
   "lsn": 1,
   "lsn_min": 1,
   "files": 1
@@ -34,11 +34,11 @@ show lsn
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": true,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": true,
+  "size": 104857600,
   "lsn": 2,
   "lsn_min": 1,
   "files": 1
@@ -53,11 +53,11 @@ show lsn
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": true,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": true,
+  "size": 104857600,
   "lsn": 3,
   "lsn_min": 1,
   "files": 1
@@ -86,11 +86,11 @@ open
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": true,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": true,
+  "size": 104857600,
   "lsn": 3,
   "lsn_min": 1,
   "files": 1

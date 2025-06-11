@@ -677,7 +677,7 @@ engine_service(Engine* self, Refresh* refresh, ServiceFilter filter, bool wait)
 			switch (action->type) {
 			case ACTION_ROTATE:
 			{
-				auto wm = var_int_of(&config()->wal_rotate_wm);
+				auto wm = var_int_of(&config()->wal_size);
 				wal_rotate(self->wal, wm);
 				break;
 			}

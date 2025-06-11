@@ -15,11 +15,11 @@ true
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 0,
   "lsn_min": 1,
   "files": 1
@@ -35,11 +35,11 @@ open
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 0,
   "lsn_min": 1,
   "files": 1
@@ -51,11 +51,11 @@ show lsn
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 1,
   "lsn_min": 1,
   "files": 1
@@ -69,11 +69,11 @@ show lsn
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 2,
   "lsn_min": 1,
   "files": 1
@@ -88,11 +88,11 @@ show lsn
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 3,
   "lsn_min": 1,
   "files": 1
@@ -115,11 +115,11 @@ show lsn
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 3,
   "lsn_min": 1,
   "files": 1
@@ -140,11 +140,11 @@ debug 'wal_create'
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 3,
   "lsn_min": 1,
   "files": 2
@@ -161,11 +161,11 @@ open
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 3,
   "lsn_min": 1,
   "files": 2
@@ -182,11 +182,11 @@ show lsn
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 4,
   "lsn_min": 1,
   "files": 2
@@ -209,11 +209,11 @@ open
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 4,
   "lsn_min": 1,
   "files": 2
@@ -229,11 +229,11 @@ debug 'wal_gc'
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 4,
   "lsn_min": 1,
   "files": 2
@@ -292,11 +292,11 @@ show partitions debug
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 4,
   "lsn_min": 1,
   "files": 2
@@ -353,11 +353,11 @@ debug 'wal_gc'
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 4,
   "lsn_min": 4,
   "files": 1
@@ -405,11 +405,11 @@ show partitions debug
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 4,
   "lsn_min": 4,
   "files": 1
@@ -476,11 +476,11 @@ show partitions debug
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 5,
   "lsn_min": 4,
   "files": 1
@@ -535,11 +535,11 @@ show partitions debug
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 5,
   "lsn_min": 4,
   "files": 1
@@ -590,11 +590,11 @@ show partitions debug
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 8,
   "lsn_min": 4,
   "files": 1

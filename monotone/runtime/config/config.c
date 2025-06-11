@@ -95,11 +95,11 @@ config_prepare(Config* self)
 		{ "mm_cache",                VAR_INT,    VAR_C,                &self->mm_cache,                NULL,        8589934592       },
 		// wal
 		{ "wal",                     VAR_BOOL,   VAR_C,                &self->wal,                     NULL,        true             },
-		{ "wal_rotate_wm",           VAR_INT,    VAR_C|VAR_R,          &self->wal_rotate_wm,           NULL,        104857600        },
+		{ "wal_crc",                 VAR_BOOL,   VAR_C,                &self->wal_crc,                 NULL,        false            },
 		{ "wal_sync_on_create",      VAR_BOOL,   VAR_C,                &self->wal_sync_on_create,      NULL,        true             },
 		{ "wal_sync_on_close",       VAR_BOOL,   VAR_C,                &self->wal_sync_on_close,       NULL,        true             },
 		{ "wal_sync_on_write",       VAR_BOOL,   VAR_C,                &self->wal_sync_on_write,       NULL,        false            },
-		{ "wal_crc",                 VAR_BOOL,   VAR_C,                &self->wal_crc,                 NULL,        false            },
+		{ "wal_size",                VAR_INT,    VAR_C|VAR_R,          &self->wal_size,                NULL,        104857600        },
 		// engine
 		{ "serial",                  VAR_BOOL,   VAR_C,                &self->serial,                  NULL,        true             },
 		{ "interval",                VAR_INT,    VAR_C|VAR_R|VAR_Z,    &self->interval,                NULL,        3000000          },

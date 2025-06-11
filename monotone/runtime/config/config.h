@@ -33,11 +33,11 @@ struct Config
 	Var  mm_cache;
 	// wal
 	Var  wal;
-	Var  wal_rotate_wm;
+	Var  wal_crc;
 	Var  wal_sync_on_create;
 	Var  wal_sync_on_close;
 	Var  wal_sync_on_write;
-	Var  wal_crc;
+	Var  wal_size;
 	// engine
 	Var  serial;
 	Var  interval;

@@ -57,11 +57,11 @@ debug "wal_read"
 show wal
 {
   "active": true,
-  "rotate_wm": 104857600,
+  "crc": false,
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
-  "crc": false,
+  "size": 104857600,
   "lsn": 2,
   "lsn_min": 3,
   "files": 1
