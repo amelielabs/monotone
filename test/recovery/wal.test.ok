@@ -20,6 +20,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 0,
   "lsn_min": 1,
   "files": 1
@@ -40,6 +41,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 0,
   "lsn_min": 1,
   "files": 1
@@ -56,6 +58,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 1,
   "lsn_min": 1,
   "files": 1
@@ -74,6 +77,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 2,
   "lsn_min": 1,
   "files": 1
@@ -93,6 +97,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 3,
   "lsn_min": 1,
   "files": 1
@@ -120,6 +125,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 3,
   "lsn_min": 1,
   "files": 1
@@ -145,6 +151,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 3,
   "lsn_min": 1,
   "files": 2
@@ -166,6 +173,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 3,
   "lsn_min": 1,
   "files": 2
@@ -187,6 +195,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 4,
   "lsn_min": 1,
   "files": 2
@@ -214,6 +223,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 4,
   "lsn_min": 1,
   "files": 2
@@ -234,6 +244,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 4,
   "lsn_min": 1,
   "files": 2
@@ -297,6 +308,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 4,
   "lsn_min": 1,
   "files": 2
@@ -358,6 +370,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 4,
   "lsn_min": 4,
   "files": 1
@@ -410,6 +423,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 4,
   "lsn_min": 4,
   "files": 1
@@ -481,6 +495,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 5,
   "lsn_min": 4,
   "files": 1
@@ -540,6 +555,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 5,
   "lsn_min": 4,
   "files": 1
@@ -595,6 +611,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 8,
   "lsn_min": 4,
   "files": 1

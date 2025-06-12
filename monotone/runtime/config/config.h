@@ -38,6 +38,7 @@ struct Config
 	Var  wal_sync_on_close;
 	Var  wal_sync_on_write;
 	Var  wal_size;
+	Var  wal_recover;
 	// engine
 	Var  serial;
 	Var  interval;

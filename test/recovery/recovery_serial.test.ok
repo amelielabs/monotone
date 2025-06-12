@@ -62,6 +62,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 2,
   "lsn_min": 3,
   "files": 1

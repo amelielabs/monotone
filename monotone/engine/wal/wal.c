@@ -265,7 +265,7 @@ wal_show(Wal* self, Buf* buf)
 	wal_id_stats(&self->list, &list_count, &list_min);
 
 	// map
-	encode_map(buf, 9);
+	encode_map(buf, 10);
 
 	// active
 	encode_raw(buf, "active", 6);
@@ -291,6 +291,10 @@ wal_show(Wal* self, Buf* buf)
 	// size
 	encode_raw(buf, "size", 4);
 	encode_integer(buf, var_int_of(&config()->wal_size));
+
+	// recover
+	encode_raw(buf, "recover", 7);
+	encode_bool(buf, var_int_of(&config()->wal_recover));
 
 	// lsn
 	encode_raw(buf, "lsn", 3);

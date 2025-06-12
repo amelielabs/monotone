@@ -31,7 +31,8 @@ parse_debug(Lex* self)
 
 	// DEBUG WAL CREATE
 	// DEBUG WAL GC
-	// DEBUG WAL SHOW
+	// DEBUG WAL READ
+	// DEBUG WAL WRITE CORRUPTED
 	// DEBUG MEMORY GC
 	if (str_compare_raw(&name.string, "wal_create", 10))
 		id = DEBUG_WAL_CREATE;
@@ -41,6 +42,9 @@ parse_debug(Lex* self)
 	else
 	if (str_compare_raw(&name.string, "wal_read", 8))
 		id = DEBUG_WAL_READ;
+	else
+	if (str_compare_raw(&name.string, "wal_write_corrupted", 19))
+		id = DEBUG_WAL_WRITE_CORRUPTED;
 	else
 	if (str_compare_raw(&name.string, "memory_gc", 9))
 		id = DEBUG_MEMORY_GC;

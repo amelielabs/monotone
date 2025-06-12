@@ -1,0 +1,252 @@
+#
+
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+set compression to ''
+set sync to false
+open
+
+# test: create wal on start
+show config wal
+show "wal"
+show wal
+
+# test: insert invalid record
+debug 'wal_write_corrupted'
+debug 'wal_read'
+
+# test: restart
+close
+
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+close
+
+# test: restart (enable wal_recover)
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+set wal_recover to true
+open
+
+show wal
+debug 'wal_read'
+
+# test: insert (after recovery)
+insert 1
+show wal
+debug 'wal_read'
+
+close
+
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+
+show wal
+debug 'wal_read'
+
+# test: insert invalid record
+debug 'wal_write_corrupted'
+debug 'wal_read'
+
+close
+
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+close
+
+# test: restart (enable wal_recover)
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+set wal_recover to true
+open
+
+show wal
+debug 'wal_read'
+
+# test: insert (after recovery)
+insert 2
+insert 3
+insert 4
+
+close
+
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+
+show wal
+debug 'wal_read'
+
+# test: insert invalid and valid records
+debug 'wal_write_corrupted'
+debug 'wal_read'
+
+insert 5
+insert 6
+
+show wal
+debug 'wal_read'
+
+close
+
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+close
+
+# test: restart (enable wal_recover)
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+set wal_recover to true
+open
+
+show wal
+debug 'wal_read'
+
+# test: create wal and insert
+debug 'wal_create'
+show wal
+
+insert 5
+insert 6
+close
+
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+
+show wal
+debug 'wal_read'
+
+# test: insert invalid record
+debug 'wal_write_corrupted'
+debug 'wal_read'
+close
+
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+close
+
+# test: restart (enable wal_recover)
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+set wal_recover to true
+open
+
+show wal
+debug 'wal_read'
+
+# test: insert invalid record
+debug 'wal_write_corrupted'
+debug 'wal_read'
+
+# test: create wal and insert
+debug 'wal_create'
+
+insert 7
+insert 8
+
+# test: create wal and insert
+debug 'wal_create'
+
+insert 9
+insert 10
+close
+
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+close
+
+# test: restart (enable wal_recover, cut off files)
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+set wal_recover to true
+open
+
+show wal
+debug 'wal_read'
+close
+
+# test: restart and insert
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+
+show wal
+debug 'wal_read'
+
+insert 7
+insert 8
+
+debug 'wal_read'
+close
+
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+
+show wal
+debug 'wal_read'
+close

@@ -173,6 +173,44 @@ main_deploy(Main* self, Str* directory)
 }
 
 static void
+main_recover(WalCursor* cursor)
+{
+	Buf msg;
+	buf_init(&msg);
+	guard(buf_free, &msg);
+	buf_printf(&msg, "wal: file '%s' has invalid record at offset %" PRIu64
+	           " (last valid lsn is %" PRIu64 ")",
+	           str_of(&cursor->file->file.path), cursor->file_offset,
+	           config_lsn());
+
+	if (! var_int_of(&config()->wal_recover))
+		error("%.*s", buf_size(&msg), buf_cstr(&msg));
+
+	// recover wal up to the last valid position
+	log("%.*s", buf_size(&msg), buf_cstr(&msg));
+	log("wal: begin recover");
+
+	auto id = cursor->file->id;
+	wal_file_truncate(cursor->file, cursor->file_offset);
+
+	// remove all wal files after it
+	for (;;)
+	{
+		id = wal_id_next(&cursor->wal->list, id);
+		if (id == UINT64_MAX)
+			break;
+		char path[PATH_MAX];
+		snprintf(path, sizeof(path), "%s/wal/%020" PRIu64 ".wal",
+		         config_directory(),
+		         id);
+		fs_unlink("%s", path);
+		log("wal/%" PRIu64 " (file removed)", id);
+	}
+
+	log("wal: done");
+}
+
+static bool
 main_replay(Main* self)
 {
 	WalCursor cursor;
@@ -214,12 +252,11 @@ main_replay(Main* self)
 	}
 	log("wal: %.1f million records processed",
 	    total / 1000000.0);
-	return;
+	return false;
+
 corrupted:
-	error("wal: file '%s' has invalid record at offset %" PRIu64 " (last valid lsn is %" PRIu64 ")",
-	      str_of(&cursor.file->file.path),
-	      cursor.file_offset,
-	      config_lsn());
+	main_recover(&cursor);
+	return true;
 }
 
 void
@@ -251,8 +288,15 @@ main_start(Main* self, const char* directory)
 	// open wal and replay
 	if (var_int_of(&config()->wal))
 	{
-		wal_open(&self->wal);
-		main_replay(self);
+		auto wal = &self->wal;
+		wal_open(wal);
+		if (main_replay(self))
+		{
+			// reopen wal manager after recover
+			wal_free(wal);
+			wal_init(wal);
+			wal_open(wal);
+		}
 	}
 
 	// restore serial number

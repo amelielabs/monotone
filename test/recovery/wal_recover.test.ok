@@ -1,0 +1,465 @@
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+set compression to ''
+set sync to false
+open
+# test: create wal on start
+show config wal
+true
+show "wal"
+true
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": false,
+  "lsn": 0,
+  "lsn_min": 1,
+  "files": 1
+}
+# test: insert invalid record
+debug 'wal_write_corrupted'
+debug 'wal_read'
+# test: restart
+close
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+error: wal: file '_output/wal/00000000000000000001.wal' has invalid record at offset 0 (last valid lsn is 0)
+close
+# test: restart (enable wal_recover)
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+set wal_recover to true
+open
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": true,
+  "lsn": 0,
+  "lsn_min": 1,
+  "files": 1
+}
+debug 'wal_read'
+# test: insert (after recovery)
+insert 1
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": true,
+  "lsn": 1,
+  "lsn_min": 1,
+  "files": 1
+}
+debug 'wal_read'
+[1, 0, 1, 35]
+
+close
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": false,
+  "lsn": 1,
+  "lsn_min": 1,
+  "files": 1
+}
+debug 'wal_read'
+[1, 0, 1, 35]
+
+# test: insert invalid record
+debug 'wal_write_corrupted'
+debug 'wal_read'
+[1, 0, 1, 35]
+[corrupted]
+close
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+error: wal: file '_output/wal/00000000000000000001.wal' has invalid record at offset 35 (last valid lsn is 1)
+close
+# test: restart (enable wal_recover)
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+set wal_recover to true
+open
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": true,
+  "lsn": 1,
+  "lsn_min": 1,
+  "files": 1
+}
+debug 'wal_read'
+[1, 0, 1, 35]
+
+# test: insert (after recovery)
+insert 2
+insert 3
+insert 4
+close
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": false,
+  "lsn": 4,
+  "lsn_min": 1,
+  "files": 1
+}
+debug 'wal_read'
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
+
+# test: insert invalid and valid records
+debug 'wal_write_corrupted'
+debug 'wal_read'
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
+[corrupted]
+insert 5
+insert 6
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": false,
+  "lsn": 6,
+  "lsn_min": 1,
+  "files": 1
+}
+debug 'wal_read'
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
+[corrupted]
+close
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+error: wal: file '_output/wal/00000000000000000001.wal' has invalid record at offset 140 (last valid lsn is 4)
+close
+# test: restart (enable wal_recover)
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+set wal_recover to true
+open
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": true,
+  "lsn": 4,
+  "lsn_min": 1,
+  "files": 1
+}
+debug 'wal_read'
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
+
+# test: create wal and insert
+debug 'wal_create'
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": true,
+  "lsn": 4,
+  "lsn_min": 1,
+  "files": 2
+}
+insert 5
+insert 6
+close
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": false,
+  "lsn": 6,
+  "lsn_min": 1,
+  "files": 2
+}
+debug 'wal_read'
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
+[5, 0, 1, 35]
+[6, 0, 1, 35]
+
+# test: insert invalid record
+debug 'wal_write_corrupted'
+debug 'wal_read'
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
+[5, 0, 1, 35]
+[6, 0, 1, 35]
+[corrupted]
+close
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+error: wal: file '_output/wal/00000000000000000005.wal' has invalid record at offset 70 (last valid lsn is 6)
+close
+# test: restart (enable wal_recover)
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+set wal_recover to true
+open
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": true,
+  "lsn": 6,
+  "lsn_min": 1,
+  "files": 2
+}
+debug 'wal_read'
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
+[5, 0, 1, 35]
+[6, 0, 1, 35]
+
+# test: insert invalid record
+debug 'wal_write_corrupted'
+debug 'wal_read'
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
+[5, 0, 1, 35]
+[6, 0, 1, 35]
+[corrupted]
+# test: create wal and insert
+debug 'wal_create'
+insert 7
+insert 8
+# test: create wal and insert
+debug 'wal_create'
+insert 9
+insert 10
+close
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+error: wal: file '_output/wal/00000000000000000005.wal' has invalid record at offset 70 (last valid lsn is 6)
+close
+# test: restart (enable wal_recover, cut off files)
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+set wal_recover to true
+open
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": true,
+  "lsn": 6,
+  "lsn_min": 1,
+  "files": 2
+}
+debug 'wal_read'
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
+[5, 0, 1, 35]
+[6, 0, 1, 35]
+
+close
+# test: restart and insert
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": false,
+  "lsn": 6,
+  "lsn_min": 1,
+  "files": 2
+}
+debug 'wal_read'
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
+[5, 0, 1, 35]
+[6, 0, 1, 35]
+
+insert 7
+insert 8
+debug 'wal_read'
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
+[5, 0, 1, 35]
+[6, 0, 1, 35]
+[7, 0, 1, 35]
+[8, 0, 1, 35]
+
+close
+# test: restart
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set sync to false
+open
+show wal
+{
+  "active": true,
+  "crc": true,
+  "sync_on_create": true,
+  "sync_on_close": true,
+  "sync_on_write": false,
+  "size": 104857600,
+  "recover": false,
+  "lsn": 8,
+  "lsn_min": 1,
+  "files": 2
+}
+debug 'wal_read'
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
+[5, 0, 1, 35]
+[6, 0, 1, 35]
+[7, 0, 1, 35]
+[8, 0, 1, 35]
+
+close

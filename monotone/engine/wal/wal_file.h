@@ -70,6 +70,14 @@ wal_file_close(WalFile* self)
 }
 
 static inline void
+wal_file_truncate(WalFile* self, uint64_t size)
+{
+	file_truncate(&self->file, size);
+	if (config_sync())
+		file_sync(&self->file);
+}
+
+static inline void
 wal_file_write(WalFile* self, void* data, int data_size)
 {
 	file_write(&self->file, data, data_size);

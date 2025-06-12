@@ -44,6 +44,7 @@ directory recovery
 group recovery
 test wal
 test wal_crc
+test wal_recover
 test recovery_config
 test recovery_memtable
 test recovery_memtable_serial

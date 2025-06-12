@@ -197,13 +197,23 @@ execute_debug(Executable* self)
 		for (;;)
 		{
 			auto status = wal_cursor_next(&cursor);
-			if (status != WAL_OK)
+			if (status == WAL_EOF)
 				break;
+			if (status == WAL_CORRUPTED)
+			{
+				buf_printf(self->output, "[corrupted]");
+				break;
+			}
 			auto write = wal_cursor_at(&cursor);
 			buf_printf(self->output, "[%" PRIu64 ", %d, %d, %d]\n", write->lsn,
 			           write->type,
 			           write->count, write->size);
 		}
+		break;
+	}
+	case DEBUG_WAL_WRITE_CORRUPTED:
+	{
+		file_write(&self->main->wal.current->file, "xxx", 3);
 		break;
 	}
 	case DEBUG_MEMORY_GC:

@@ -104,6 +104,7 @@ show config
   "wal_sync_on_close": true,
   "wal_sync_on_write": false,
   "wal_size": 104857600,
+  "wal_recover": false,
   "serial": false,
   "interval": 3000000,
   "compression": "",
@@ -121,6 +122,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 9,
   "lsn_min": 1,
   "files": 1
@@ -218,6 +220,7 @@ show config
   "wal_sync_on_close": true,
   "wal_sync_on_write": false,
   "wal_size": 104857600,
+  "wal_recover": false,
   "serial": false,
   "interval": 3000000,
   "compression": "",
@@ -235,6 +238,7 @@ show wal
   "sync_on_close": true,
   "sync_on_write": false,
   "size": 104857600,
+  "recover": false,
   "lsn": 9,
   "lsn_min": 1,
   "files": 1

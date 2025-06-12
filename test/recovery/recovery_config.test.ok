@@ -40,6 +40,7 @@ show all
   "wal_sync_on_close": true,
   "wal_sync_on_write": false,
   "wal_size": 104857600,
+  "wal_recover": false,
   "serial": false,
   "interval": 10,
   "compression": "",
