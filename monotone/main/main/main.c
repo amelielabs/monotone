@@ -179,12 +179,18 @@ main_replay(Main* self)
 	wal_cursor_init(&cursor);
 	guard(wal_cursor_close, &cursor);
 
-	wal_cursor_open(&cursor, &self->wal, 0);
+	auto status = wal_cursor_open(&cursor, &self->wal, 0);
+	if (status == WAL_CORRUPTED)
+		goto corrupted;
+
 	uint64_t total = 0;
 	for (;;)
 	{
-		if (! wal_cursor_next(&cursor))
+		auto status = wal_cursor_next(&cursor);
+		if (status == WAL_EOF)
 			break;
+		if (status == WAL_CORRUPTED)
+			goto corrupted;
 
 		// replay operation
 		auto write = wal_cursor_at(&cursor);
@@ -208,6 +214,12 @@ main_replay(Main* self)
 	}
 	log("wal: %.1f million records processed",
 	    total / 1000000.0);
+	return;
+corrupted:
+	error("wal: file '%s' has invalid record at offset %" PRIu64 " (last valid lsn is %" PRIu64 ")",
+	      str_of(&cursor.file->file.path),
+	      cursor.file_offset,
+	      config_lsn());
 }
 
 void

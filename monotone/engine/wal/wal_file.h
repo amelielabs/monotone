@@ -13,6 +13,13 @@
 
 typedef struct WalFile WalFile;
 
+typedef enum
+{
+	WAL_OK,
+	WAL_EOF,
+	WAL_CORRUPTED
+} WalStatus;
+
 struct WalFile
 {
 	uint64_t id;
@@ -84,14 +91,18 @@ wal_file_eof(WalFile* self, uint32_t offset, uint32_t size)
 	return (offset + size) > self->file.size;
 }
 
-static inline bool
+static inline WalStatus
 wal_file_pread(WalFile* self, uint64_t offset, Buf* buf)
 {
 	buf_reset(buf);
 
 	// check for eof
+	if (self->file.size == offset)
+		return WAL_EOF;
+
+	// ensure next record fits header
 	if (wal_file_eof(self, offset, sizeof(LogWrite)))
-		return false;
+		return WAL_CORRUPTED;
 
 	// read header
 	uint32_t size_header = sizeof(LogWrite);
@@ -99,9 +110,9 @@ wal_file_pread(WalFile* self, uint64_t offset, Buf* buf)
 	file_pread_buf(&self->file, buf, size_header, offset);
 	uint32_t size = ((LogWrite*)(buf->start + start))->size;
 
-	// check for eof
+	// ensure file size fits the record
 	if (wal_file_eof(self, offset, size))
-		return false;
+		return WAL_CORRUPTED;
 
 	// read body
 	uint32_t size_data;
@@ -116,10 +127,8 @@ wal_file_pread(WalFile* self, uint64_t offset, Buf* buf)
 		crc = global()->crc(crc, buf->start + start + size_header, size_data);
 		crc = global()->crc(crc, (char*)write + sizeof(uint32_t), size_header - sizeof(uint32_t));
 		if (crc != write->crc)
-			error("wal: file '%s' crc mismatch at offset %" PRIu64 " (lsn %" PRIu64 ")",
-			      str_of(&self->file.path),
-			      offset, write->lsn);
+			return WAL_CORRUPTED;
 	}
 
-	return true;
+	return WAL_OK;
 }

@@ -21,9 +21,13 @@ struct WalCursor
 	Wal*     wal;
 };
 
-void wal_cursor_init(WalCursor*);
-void wal_cursor_open(WalCursor*, Wal*, uint64_t);
-void wal_cursor_close(WalCursor*);
-bool wal_cursor_next(WalCursor*);
-LogWrite*
-wal_cursor_at(WalCursor*);
+void      wal_cursor_init(WalCursor*);
+void      wal_cursor_close(WalCursor*);
+WalStatus wal_cursor_open(WalCursor*, Wal*, uint64_t);
+WalStatus wal_cursor_next(WalCursor*);
+
+static inline LogWrite*
+wal_cursor_at(WalCursor* self)
+{
+	return (LogWrite*)self->buf.start;
+}

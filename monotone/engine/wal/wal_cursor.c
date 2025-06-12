@@ -27,7 +27,7 @@ wal_cursor_init(WalCursor* self)
 	buf_init(&self->buf);
 }
 
-void
+WalStatus
 wal_cursor_open(WalCursor* self, Wal* wal, uint64_t lsn)
 {
 	self->file        = NULL;
@@ -41,15 +41,16 @@ wal_cursor_open(WalCursor* self, Wal* wal, uint64_t lsn)
 	else
 		id = wal_id_find(&wal->list, lsn);
 	if (id == UINT64_MAX)
-		return;
+		return WAL_EOF;
 	self->file = wal_file_allocate(id);
 	wal_file_open(self->file);
 
 	// rewind to the start lsn
 	for (;;)
 	{
-		if (! wal_cursor_next(self))
-			break;
+		auto status = wal_cursor_next(self);
+		if (status != WAL_OK)
+			return status;
 		auto write = wal_cursor_at(self);
 		if (write->lsn >= lsn)
 		{
@@ -58,6 +59,7 @@ wal_cursor_open(WalCursor* self, Wal* wal, uint64_t lsn)
 			break;
 		}
 	}
+	return WAL_OK;
 }
 
 void
@@ -72,28 +74,31 @@ wal_cursor_close(WalCursor* self)
 	buf_free(&self->buf);
 }
 
-LogWrite*
-wal_cursor_at(WalCursor* self)
-{
-	return (LogWrite*)self->buf.start;
-}
-
-bool
+WalStatus
 wal_cursor_next(WalCursor* self)
 {
 	if (unlikely(self->file == NULL))
-		return false;
+		return WAL_EOF;
 
 	auto wal = self->wal;
 	for (;;)
 	{
 		auto file = self->file;
-		if (wal_file_pread(file, self->file_offset, &self->buf))
+		auto status = wal_file_pread(file, self->file_offset, &self->buf);
+		switch (status) {
+		case WAL_OK:
 		{
 			auto write = wal_cursor_at(self);
 			self->file_offset += write->size;
-			return true;
+			return status;
 		}
+		case WAL_CORRUPTED:
+			return status;
+		case WAL_EOF:
+			break;
+		}
+
+		// eof
 
 		// get to the next file id
 		uint64_t id;
@@ -112,5 +117,5 @@ wal_cursor_next(WalCursor* self)
 		wal_file_open(self->file);
 	}
 
-	return false;
+	return WAL_EOF;
 }

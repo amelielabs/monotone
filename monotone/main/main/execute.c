@@ -192,10 +192,12 @@ execute_debug(Executable* self)
 		WalCursor cursor;
 		wal_cursor_init(&cursor);
 		guard(wal_cursor_close, &cursor);
-		wal_cursor_open(&cursor, &self->main->wal, 0);
+		if (wal_cursor_open(&cursor, &self->main->wal, 0) != WAL_OK)
+			break;
 		for (;;)
 		{
-			if (! wal_cursor_next(&cursor))
+			auto status = wal_cursor_next(&cursor);
+			if (status != WAL_OK)
 				break;
 			auto write = wal_cursor_at(&cursor);
 			buf_printf(self->output, "[%" PRIu64 ", %d, %d, %d]\n", write->lsn,
