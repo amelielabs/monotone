@@ -87,7 +87,7 @@ show partitions debug
 }]
 show config
 {
-  "version": "1.0.0",
+  "version": "1.2.0",
   "uuid": "00000000-0000-0000-0000-000000000000",
   "directory": "_output",
   "log": true,
@@ -205,7 +205,7 @@ show partitions debug
 }]
 show config
 {
-  "version": "1.0.0",
+  "version": "1.2.0",
   "uuid": "00000000-0000-0000-0000-000000000000",
   "directory": "_output",
   "log": true,
