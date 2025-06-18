@@ -138,6 +138,31 @@ wal_gc(Wal* self, uint64_t snapshot)
 	}
 }
 
+void
+wal_sync(Wal* self)
+{
+	if (! config_sync())
+		return;
+
+	mutex_lock(&self->lock);
+	auto file_fd = dup(self->current->file.fd);
+	auto file_size = self->current->file.size;
+	mutex_unlock(&self->lock);
+	if (file_fd == -1)
+		error_system();
+
+	auto rc = vfs_sync_file_range(file_fd, 0, file_size);
+	if (rc == -1)
+	{
+		close(file_fd);
+		error_system();
+	}
+
+	rc = close(file_fd);
+	if (rc == -1)
+		error_system();
+}
+
 static inline int64_t
 wal_file_id_of(const char* path)
 {
@@ -265,7 +290,7 @@ wal_show(Wal* self, Buf* buf)
 	wal_id_stats(&self->list, &list_count, &list_min);
 
 	// map
-	encode_map(buf, 10);
+	encode_map(buf, 11);
 
 	// active
 	encode_raw(buf, "active", 6);
@@ -287,6 +312,10 @@ wal_show(Wal* self, Buf* buf)
 	// sync_on_write
 	encode_raw(buf, "sync_on_write", 13);
 	encode_bool(buf, var_int_of(&config()->wal_sync_on_write));
+
+	// sync_interval
+	encode_raw(buf, "sync_interval", 13);
+	encode_integer(buf, var_int_of(&config()->wal_sync_interval));
 
 	// size
 	encode_raw(buf, "size", 4);

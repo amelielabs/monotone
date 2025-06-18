@@ -20,6 +20,7 @@ struct Main
 	Engine         engine;
 	Wal            wal;
 	Service        service;
+	Cron           cron;
 	WorkerMgr      worker_mgr;
 	CloudMgr       cloud_mgr;
 	MemoryMgr      memory_mgr;

@@ -39,6 +39,7 @@ show all
   "wal_sync_on_create": true,
   "wal_sync_on_close": true,
   "wal_sync_on_write": false,
+  "wal_sync_interval": 1000,
   "wal_size": 104857600,
   "wal_recover": false,
   "serial": false,

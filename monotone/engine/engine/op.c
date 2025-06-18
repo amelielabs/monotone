@@ -649,6 +649,14 @@ engine_gc(Engine* self)
 	wal_gc(self->wal, lsn_min);
 }
 
+hot void
+engine_sync(Engine* self)
+{
+	if (! var_int_of(&config()->wal))
+		return;
+	wal_sync(self->wal);
+}
+
 bool
 engine_service(Engine* self, Refresh* refresh, ServiceFilter filter, bool wait)
 {
@@ -683,6 +691,9 @@ engine_service(Engine* self, Refresh* refresh, ServiceFilter filter, bool wait)
 			}
 			case ACTION_GC:
 				engine_gc(self);
+				break;
+			case ACTION_SYNC:
+				engine_sync(self);
 				break;
 			case ACTION_REBALANCE:
 				engine_rebalance(self, refresh);

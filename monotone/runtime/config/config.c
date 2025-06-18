@@ -99,6 +99,7 @@ config_prepare(Config* self)
 		{ "wal_sync_on_create",      VAR_BOOL,   VAR_C,                &self->wal_sync_on_create,      NULL,        true             },
 		{ "wal_sync_on_close",       VAR_BOOL,   VAR_C,                &self->wal_sync_on_close,       NULL,        true             },
 		{ "wal_sync_on_write",       VAR_BOOL,   VAR_C,                &self->wal_sync_on_write,       NULL,        false            },
+		{ "wal_sync_interval",       VAR_INT,    VAR_C,                &self->wal_sync_interval,       NULL,        1000             },
 		{ "wal_size",                VAR_INT,    VAR_C|VAR_R,          &self->wal_size,                NULL,        104857600        },
 		{ "wal_recover",             VAR_BOOL,   VAR_C|VAR_E,          &self->wal_recover,             NULL,        false            },
 		// engine

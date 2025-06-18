@@ -29,6 +29,7 @@ void engine_refresh_range(Engine*, Refresh*, uint64_t, uint64_t, Str*);
 void engine_rebalance(Engine*, Refresh*);
 void engine_checkpoint(Engine*);
 void engine_gc(Engine*);
+void engine_sync(Engine*);
 
 // service
 bool engine_service(Engine*, Refresh*, ServiceFilter, bool);

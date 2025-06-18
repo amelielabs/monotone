@@ -83,6 +83,7 @@ main_init(Main* self)
 
 	rwlock_init(&self->lock);
 	service_init(&self->service);
+	cron_init(&self->cron, &self->service);
 
 	cloud_mgr_init(&self->cloud_mgr);
 
@@ -100,6 +101,7 @@ main_free(Main* self)
 	engine_free(&self->engine);
 	wal_free(&self->wal);
 	service_free(&self->service);
+	cron_free(&self->cron);
 	cloud_mgr_free(&self->cloud_mgr);
 	config_free(&self->config);
 	compression_mgr_free(&self->compression_mgr);
@@ -309,6 +311,9 @@ main_start(Main* self, const char* directory)
 	// start compaction workers
 	worker_mgr_start(&self->worker_mgr, &self->engine);
 
+	// start interval worker
+	cron_start(&self->cron);
+
 	// done
 	var_int_set(&config()->online, true);
 }
@@ -316,6 +321,9 @@ main_start(Main* self, const char* directory)
 void
 main_stop(Main* self)
 {
+	// shutdown interval worker
+	cron_stop(&self->cron);
+
 	// shutdown workers
 	service_shutdown(&self->service);
 

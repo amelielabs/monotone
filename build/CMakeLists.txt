@@ -122,7 +122,8 @@ set(MONOTONE_SOURCES_ENGINE
     ${MONOTONE_ROOT}/engine/engine/refresh.c
     ${MONOTONE_ROOT}/engine/engine/op.c
     ${MONOTONE_ROOT}/engine/engine/worker.c
-    ${MONOTONE_ROOT}/engine/engine/worker_mgr.c)
+    ${MONOTONE_ROOT}/engine/engine/worker_mgr.c
+    ${MONOTONE_ROOT}/engine/engine/cron.c)
 
 set(MONOTONE_SOURCES_MAIN
     ${MONOTONE_ROOT}/main/command/lex.c

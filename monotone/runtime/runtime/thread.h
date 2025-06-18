@@ -30,6 +30,12 @@ thread_init(Thread* self)
 	self->arg      = NULL;
 }
 
+static inline bool
+thread_is_active(Thread* self)
+{
+	return self->id != 0;
+}
+
 static inline int
 thread_create(Thread* self, ThreadFunction function, void* arg)
 {

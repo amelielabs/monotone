@@ -61,6 +61,7 @@ show wal
   "sync_on_create": true,
   "sync_on_close": true,
   "sync_on_write": false,
+  "sync_interval": 1000,
   "size": 104857600,
   "recover": false,
   "lsn": 2,
