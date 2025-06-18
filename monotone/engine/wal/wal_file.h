@@ -94,7 +94,7 @@ wal_file_writev(WalFile* self, struct iovec* iov, int iovc)
 }
 
 static inline bool
-wal_file_eof(WalFile* self, uint32_t offset, uint32_t size)
+wal_file_eof(WalFile* self, uint64_t offset, uint32_t size)
 {
 	return (offset + size) > self->file.size;
 }
@@ -114,12 +114,16 @@ wal_file_pread(WalFile* self, uint64_t offset, Buf* buf)
 
 	// read header
 	uint32_t size_header = sizeof(LogWrite);
-	int start = buf_size(buf);
 	file_pread_buf(&self->file, buf, size_header, offset);
-	uint32_t size = ((LogWrite*)(buf->start + start))->size;
 
 	// ensure file size fits the record
-	if (wal_file_eof(self, offset, size))
+	auto write = (LogWrite*)buf->start;
+	uint32_t size = write->size;
+	if (size < size_header || wal_file_eof(self, offset, size))
+		return WAL_CORRUPTED;
+
+	// basic header consistency check before crc validation
+	if (write->type > LOG_DROP)
 		return WAL_CORRUPTED;
 
 	// read body
@@ -130,9 +134,9 @@ wal_file_pread(WalFile* self, uint64_t offset, Buf* buf)
 	// check crc
 	if (var_int_of(&config()->wal_crc))
 	{
-		auto write = (LogWrite*)(buf->start + start);
+		write = (LogWrite*)buf->start;
 		uint32_t crc = 0;
-		crc = global()->crc(crc, buf->start + start + size_header, size_data);
+		crc = global()->crc(crc, buf->start + size_header, size_data);
 		crc = global()->crc(crc, (char*)write + sizeof(uint32_t), size_header - sizeof(uint32_t));
 		if (crc != write->crc)
 			return WAL_CORRUPTED;
