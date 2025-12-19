@@ -599,6 +599,7 @@ engine_checkpoint(Engine* self)
 	guard(control_unlock_guard, NULL);
 
 	// schedule refresh
+	auto scheduled = false;
 	auto slice = mapping_min(&self->mapping);
 	while (slice)
 	{
@@ -608,9 +609,14 @@ engine_checkpoint(Engine* self)
 			auto part = ref->part;
 			service_refresh(self->service, part);
 			part->refresh = true;
+			scheduled = true;
 		}
 		slice = mapping_next(&self->mapping, slice);
 	}
+
+	// force wal gc if no work were scheduled
+	if (! scheduled)
+		service_gc(self->service);
 }
 
 hot void

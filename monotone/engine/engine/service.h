@@ -91,6 +91,13 @@ service_add(Service* self, uint64_t id, int count, ...)
 }
 
 static inline void
+service_gc(Service* self)
+{
+	service_add(self, UINT64_MAX, 1,
+	            ACTION_GC);
+}
+
+static inline void
 service_rotate(Service* self)
 {
 	service_add(self, UINT64_MAX, 2,
