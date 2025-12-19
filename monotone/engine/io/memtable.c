@@ -62,8 +62,8 @@ memtable_free(Memtable* self)
 {
 	self->count       = 0;
 	self->count_pages = 0;
-	self->lsn_min     = UINT64_MAX;
-	self->lsn_max     = 0;
+	atomic_u64_set(&self->lsn_min, UINT64_MAX);
+	atomic_u64_set(&self->lsn_max, 0);
 	rbtree_init(&self->tree);
 	list_init(&self->iterators);
 	heap_reset(&self->heap);
@@ -72,14 +72,14 @@ memtable_free(Memtable* self)
 void
 memtable_move(Memtable* self, Memtable* from)
 {
-	*self = *from;
 	assert(! from->iterators_count);
+	*self = *from;
 	list_init(&self->iterators);
 
 	from->count       = 0;
 	from->count_pages = 0;
-	from->lsn_min     = UINT64_MAX;
-	from->lsn_max     = 0;
+	atomic_u64_set(&from->lsn_min, UINT64_MAX);
+	atomic_u64_set(&from->lsn_max, 0);
 	rbtree_init(&from->tree);
 	list_init(&from->iterators);
 	heap_init(&from->heap, global()->memory_mgr);
@@ -263,6 +263,11 @@ memtable_unset(Memtable* self, Event* event)
 	page->events_count--;
 	atomic_u64_dec(&self->count);
 
+	if (atomic_u64_of(&self->count) == 0) {
+		atomic_u64_set(&self->lsn_min, UINT64_MAX);
+		atomic_u64_set(&self->lsn_max, 0);
+	}
+
 	// remove page, if it becomes empty
 	if (page->events_count == 0)
 	{
@@ -312,9 +317,21 @@ memtable_seek(Memtable* self, Event* key, MemtablePage** page, int* pos)
 void
 memtable_follow(Memtable* self, uint64_t lsn)
 {
-	if (lsn < atomic_u64_of(&self->lsn_min))
-		atomic_u64_set(&self->lsn_min, lsn);
+	// update lsn_min
+	uint64_t current_min = atomic_u64_of(&self->lsn_min);
+	while (lsn < current_min)
+	{
+		if (atomic_u64_cas(&self->lsn_min, current_min, lsn))
+			break;
+		current_min = atomic_u64_of(&self->lsn_min);
+	}
 
-	if (lsn > atomic_u64_of(&self->lsn_max))
-		atomic_u64_set(&self->lsn_max, lsn);
+	// update lsn_max
+	uint64_t current_max = atomic_u64_of(&self->lsn_max);
+	while (lsn > current_max)
+	{
+		if (atomic_u64_cas(&self->lsn_max, current_max, lsn))
+			break;
+		current_max = atomic_u64_of(&self->lsn_max);
+	}
 }

@@ -67,3 +67,9 @@ atomic_u64_set(atomic_u64* self, uint64_t value)
 {
 	return __sync_lock_test_and_set(self, value);
 }
+
+static inline bool
+atomic_u64_cas(atomic_u64* self, uint64_t old_value, uint64_t new_value)
+{
+	return __sync_bool_compare_and_swap(self, old_value, new_value);
+}

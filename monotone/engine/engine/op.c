@@ -637,10 +637,13 @@ engine_gc(Engine* self)
 	while (slice)
 	{
 		auto ref = ref_of(slice);
+		if (ref->part->refresh) {
+			slice = mapping_next(&self->mapping, slice);
+			continue;
+		}
 
 		uint64_t min_a = atomic_u64_of(&ref->part->memtable_a.lsn_min);
 		uint64_t min_b = atomic_u64_of(&ref->part->memtable_b.lsn_min);
-
 		if (min_a < lsn_min)
 			lsn_min = min_a;
 		if (min_b < lsn_min)
