@@ -47,7 +47,7 @@ event_is_delete(Event* self)
 always_inline hot static inline int
 event_size(Event* self)
 {
-	return sizeof(Event) + self->key_size + self->data_size;
+	return sizeof(Event) + self->data_size;
 }
 
 always_inline hot static inline uint8_t*
